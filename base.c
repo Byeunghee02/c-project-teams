@@ -19,7 +19,6 @@ int main()
     {
         readLine++;
     }
-    printf("%d\n", readLine);
     fseek(fin, 0, SEEK_SET);
 
     //input list
@@ -31,7 +30,6 @@ int main()
     for (int i = 0; i < readLine; i++)
     {
         fscanf(fin, "%d %d", &inputList[i][0], &inputList[i][1]);
-        printf("%d %d ", inputList[i][0], inputList[i][1]);
     }
     fclose(fin);
 
@@ -79,13 +77,12 @@ int main()
             resultMatrix[j] = (int *)calloc(inputList[i + 1][1], sizeof(int));
         }
         for (int j = 0; j < inputList[0][0]; j++)
-            for (int k = 0; k < inputList[i + 1][1]; k++){
+            for (int k = 0; k < inputList[i + 1][1]; k++)
                 for (int t = 0; t < inputList[i + 1][0]; t++)
                 {
                     resultMatrix[j][k] += tempMatrix[j][t] * matrixList[i + 1][t][k];
                     multipleCounter++;
                 }
-                printf("%d ", resultMatrix[j][k]);}
         free(tempMatrix);
         int **tempMatrix = (int **)calloc(inputList[0][0], sizeof(int *));
         for (int j = 0; j < inputList[i][0]; j++)
@@ -135,4 +132,5 @@ int main()
     }
 
     fclose(fout);
+    printf("Done!");
 }
