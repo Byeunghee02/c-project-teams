@@ -64,7 +64,7 @@ int main(){
         }
     }
     for(int k=0; k<arr[0]; k++){
-        for(int n=0; n<arr[line]; n++){
+        for(int n=0; n<arr[line]; n++){             //for문 안에 arr의 인덱스가 line-1이라서 출력이 이상하게 되고 있었음, 인덱스를 line으로 고치니 해결됨
             printf("%d ", mat_mid[line-2][k][n]);
         }
         printf("\n");

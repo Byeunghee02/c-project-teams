@@ -5,6 +5,13 @@
 #define INPUT_FILE_NAME "input.txt"
 #define OUTPUT_FILE_NAME "input_sol.txt"
 
+int min(int a, int b)
+{
+    if (a < b)
+        return a;
+    return b;
+}
+
 int main()
 {
     FILE *fin = fopen(INPUT_FILE_NAME, "r");
@@ -32,6 +39,21 @@ int main()
         fscanf(fin, "%d %d", &inputList[i][0], &inputList[i][1]);
     }
     fclose(fin);
+
+    //optimized multiplication
+    int **dp = (int **)calloc(readLine + 1, sizeof(int *));
+    for (int i = 0; i < readLine + 1; i++)
+    {
+        dp[i] = (int *)calloc(readLine + 1, sizeof(int));
+    }
+
+    for (int i = 1; i < readLine + 1; i++)
+    {
+        for (int j = 1; i + j < readLine + 1; j++)
+        {
+            dp[j][i + j] = min(dp[j][i + j - 1] + inputList[j - 1][0] * inputList[i + j - 1][0] * inputList[i + j - 1][1], dp[j + 1][i + j] + inputList[j - 1][0] * inputList[j - 1][1] * inputList[i + j - 1][1]);
+        }
+    }
 
     //matrix generation
     int ***matrixList = (int ***)malloc(sizeof(int **) * readLine);
@@ -97,7 +119,7 @@ int main()
         if (i == readLine - 2)
         {
             for (int j = 0; j < inputList[0][0]; j++)
-                for (int k = 0; k < inputList[readLine-1][1]; k++)
+                for (int k = 0; k < inputList[readLine - 1][1]; k++)
                 {
                     result[j][k] = resultMatrix[j][k];
                 }
@@ -106,7 +128,8 @@ int main()
 
     //result output
     FILE *fout = fopen(OUTPUT_FILE_NAME, "w+");
-    fprintf(fout, "%d\n", multipleCounter);
+    fprintf(fout, "multiple counter: %d\n", multipleCounter);
+    fprintf(fout, "optimized multiple counter: %d\n\n", dp[1][readLine]);
     fprintf(fout, "Output Matrix\n\n");
     for (int i = 0; i < inputList[0][0]; i++)
     {
