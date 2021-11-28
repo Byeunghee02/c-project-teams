@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <limits.h>
 
 #define INPUT_FILE_NAME "input.txt"
 #define OUTPUT_FILE_NAME "input_sol.txt"
@@ -58,29 +59,57 @@ int main()
         backTrack[i] = (int **)calloc(readLine + 1, sizeof(int *));
     for (int i = 0; i < readLine + 1; i++)
         for (int j = 0; j < readLine + 1; j++)
-            backTrack[i][j] = (int *)calloc(2, sizeof(int));
+            backTrack[i][j] = (int *)calloc(4, sizeof(int));
 
     //exploring dp & backTracking
     for (int i = 1; i < readLine + 1; i++)
-    {
         for (int j = 1; i + j < readLine + 1; j++)
         {
-            dp[j][i + j] = min(dp[j][i + j - 1] + inputList[j - 1][0] * inputList[i + j - 1][0] * inputList[i + j - 1][1], dp[j + 1][i + j] + inputList[j - 1][0] * inputList[j - 1][1] * inputList[i + j - 1][1]);
-            if (minVal(dp[j][i + j - 1] + inputList[j - 1][0] * inputList[i + j - 1][0] * inputList[i + j - 1][1], dp[j + 1][i + j] + inputList[j - 1][0] * inputList[j - 1][1] * inputList[i + j - 1][1]) == 'l')
+            dp[j][i + j] = INT_MAX;
+            for (int k = j; k <= i + j - 1; k++)
             {
-                backTrack[j][i + j][0] = j;
-                backTrack[j][i + j][1] = i + j - 1;
-            }
-            else
-            {
-                backTrack[j][i + j][0] = j + 1;
-                backTrack[j][i + j][1] = i + j;
+                int tmp = dp[j][k] + dp[k + 1][i + j] + inputList[j - 1][0] * inputList[k][0] * inputList[i + j - 1][1];
+                if (tmp < dp[j][i + j])
+                {
+                    dp[j][i + j] = tmp;
+                    backTrack[j][i + j][0] = j;
+                    backTrack[j][i + j][1] = k;
+                    backTrack[j][i + j][2] = k + 1;
+                    backTrack[j][i + j][3] = i + j;
+                }
             }
         }
-    }
 
     //optimized order
     int *optimizedOrder = (int *)malloc(sizeof(int) * readLine);
+    int idx1 = 1, idx2 = readLine, idxo = 0;
+    for (int i = 0; i < readLine - 1; i++)
+    {
+        int val1 = backTrack[idx1][idx2][0];
+        int val2 = backTrack[idx1][idx2][1];
+        int val3 = backTrack[idx1][idx2][2];
+        int val4 = backTrack[idx1][idx2][3];
+        if (val1 == val2)
+        {
+            optimizedOrder[idxo] = val1;
+            idxo++;
+        }
+        else
+        {
+            idx1 = val1;
+            idx2 = val2;
+        }
+        if (val3 == val4)
+        {
+            optimizedOrder[idxo] = val3;
+            idxo++;
+        }
+        else
+        {
+            idx1 = val3;
+            idx2 = val4;
+        }
+    }
 
     //matrix generation
     int ***matrixList = (int ***)malloc(sizeof(int **) * readLine);
@@ -100,6 +129,8 @@ int main()
     }
 
     //matrix multiple
+    //create array
+    idxo = readLine - 1;
     int **tempMatrix = (int **)calloc(inputList[0][0], sizeof(int *));
     for (int i = 0; i < inputList[0][0]; i++)
     {
@@ -108,18 +139,21 @@ int main()
     for (int i = 0; i < inputList[0][0]; i++)
         for (int j = 0; j < inputList[0][1]; j++)
         {
-            tempMatrix[i][j] = matrixList[0][i][j];
+            tempMatrix[i][j] = matrixList[optimizedOrder[idxo] - 1][i][j];
         }
+    idxo--;
 
     int **result = (int **)calloc(inputList[0][0], sizeof(int *));
     for (int j = 0; j < inputList[0][0]; j++)
     {
         result[j] = (int *)calloc(inputList[readLine - 1][1], sizeof(int));
     }
-
+    //multiple
     int multipleCounter = 0;
     for (int i = 0; i < readLine - 1; i++)
     {
+        int index = optimizedOrder[idxo] - 1;
+        idxo--;
         int **resultMatrix = (int **)calloc(inputList[0][0], sizeof(int *));
         for (int j = 0; j < inputList[i][0]; j++)
         {
@@ -129,7 +163,7 @@ int main()
             for (int k = 0; k < inputList[i + 1][1]; k++)
                 for (int t = 0; t < inputList[i + 1][0]; t++)
                 {
-                    resultMatrix[j][k] += tempMatrix[j][t] * matrixList[i + 1][t][k];
+                    resultMatrix[j][k] += tempMatrix[j][t] * matrixList[index][t][k];
                     multipleCounter++;
                 }
         free(tempMatrix);
