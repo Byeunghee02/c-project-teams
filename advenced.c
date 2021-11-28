@@ -11,6 +11,12 @@ int min(int a, int b)
         return a;
     return b;
 }
+char minVal(int a, int b)
+{
+    if (a < b)
+        return 'l';
+    return 'r';
+}
 
 int main()
 {
@@ -41,19 +47,40 @@ int main()
     fclose(fin);
 
     //optimized multiplication
+    //dp create
     int **dp = (int **)calloc(readLine + 1, sizeof(int *));
     for (int i = 0; i < readLine + 1; i++)
-    {
         dp[i] = (int *)calloc(readLine + 1, sizeof(int));
-    }
 
+    //backTrack create
+    int ***backTrack = (int ***)calloc(readLine + 1, sizeof(int **));
+    for (int i = 0; i < readLine + 1; i++)
+        backTrack[i] = (int **)calloc(readLine + 1, sizeof(int *));
+    for (int i = 0; i < readLine + 1; i++)
+        for (int j = 0; j < readLine + 1; j++)
+            backTrack[i][j] = (int *)calloc(2, sizeof(int));
+
+    //exploring dp & backTracking
     for (int i = 1; i < readLine + 1; i++)
     {
         for (int j = 1; i + j < readLine + 1; j++)
         {
             dp[j][i + j] = min(dp[j][i + j - 1] + inputList[j - 1][0] * inputList[i + j - 1][0] * inputList[i + j - 1][1], dp[j + 1][i + j] + inputList[j - 1][0] * inputList[j - 1][1] * inputList[i + j - 1][1]);
+            if (minVal(dp[j][i + j - 1] + inputList[j - 1][0] * inputList[i + j - 1][0] * inputList[i + j - 1][1], dp[j + 1][i + j] + inputList[j - 1][0] * inputList[j - 1][1] * inputList[i + j - 1][1]) == 'l')
+            {
+                backTrack[j][i + j][0] = j;
+                backTrack[j][i + j][1] = i + j - 1;
+            }
+            else
+            {
+                backTrack[j][i + j][0] = j + 1;
+                backTrack[j][i + j][1] = i + j;
+            }
         }
     }
+
+    //optimized order
+    int *optimizedOrder = (int *)malloc(sizeof(int) * readLine);
 
     //matrix generation
     int ***matrixList = (int ***)malloc(sizeof(int **) * readLine);

@@ -1,0 +1,31 @@
+multiple counter: 60
+optimized multiple counter: 56
+
+Output Matrix
+
+72167488 154620768 61826048 175234088 123652096 
+72125752 154579032 61853872 175192352 123707744 
+
+Input Matrix 1
+
+1 4 3 
+4 7 10 
+
+Input Matrix 2
+
+6 5 3 9 
+10 1 2 6 
+5 1 2 2 
+
+Input Matrix 3
+
+9 8 
+5 10 
+8 8 
+10 8 
+
+Input Matrix 4
+
+5 9 2 10 4 
+2 6 4 7 8 
+
