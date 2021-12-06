@@ -1,31 +1,28 @@
-multiple counter: 60
-optimized multiple counter: 56
+multiple counter: 10
+optimized multiple counter: 10
 
 Output Matrix
 
-162819872 188036520 87784520 225592608 162973520 
-162999128 187908480 87656480 225541392 162845480 
+1 
+10 
 
 Input Matrix 1
 
-6 5 9 
-1 3 2 
+7 
+5 
 
 Input Matrix 2
 
-10 6 2 5 
-4 7 9 6 
-9 5 1 5 
+1 3 10 
 
 Input Matrix 3
 
-5 3 
-8 3 
-6 3 
-6 5 
+1 5 
+3 9 
+6 10 
 
 Input Matrix 4
 
-3 10 6 10 9 
-10 5 1 8 4 
+1 
+10 
 

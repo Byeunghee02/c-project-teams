@@ -131,52 +131,84 @@ int main()
     //matrix multiple
     //create array
     idxo = readLine - 1;
-    int **tempMatrix = (int **)calloc(inputList[0][0], sizeof(int *));
-    for (int i = 0; i < inputList[0][0]; i++)
+    int firstIdx = optimizedOrder[idxo] - 1;
+    int **tempMatrix = (int **)calloc(inputList[firstIdx][0], sizeof(int *));
+    for (int i = 0; i < inputList[firstIdx][0]; i++)
     {
-        tempMatrix[i] = (int *)calloc(inputList[0][1], sizeof(int));
+        tempMatrix[i] = (int *)calloc(inputList[firstIdx][1], sizeof(int));
     }
-    for (int i = 0; i < inputList[0][0]; i++)
-        for (int j = 0; j < inputList[0][1]; j++)
+    for (int i = 0; i < inputList[firstIdx][0]; i++)
+        for (int j = 0; j < inputList[firstIdx][1]; j++)
         {
-            tempMatrix[i][j] = matrixList[optimizedOrder[idxo] - 1][i][j];
+            tempMatrix[i][j] += matrixList[firstIdx][i][j];
         }
-    idxo--;
 
     int **result = (int **)calloc(inputList[0][0], sizeof(int *));
     for (int j = 0; j < inputList[0][0]; j++)
     {
         result[j] = (int *)calloc(inputList[readLine - 1][1], sizeof(int));
     }
+    int frontIdx, backIdx, midIdx;
+    if (optimizedOrder[idxo - 1] < optimizedOrder[idxo])
+    {
+        frontIdx = optimizedOrder[idxo - 1] - 1;
+        backIdx = optimizedOrder[idxo] - 1;
+    }
+    else
+    {
+        backIdx = optimizedOrder[idxo - 1] - 1;
+        frontIdx = optimizedOrder[idxo] - 1;
+    }
+    midIdx = backIdx;
+    idxo--;
+
     //multiple
     int multipleCounter = 0;
     for (int i = 0; i < readLine - 1; i++)
     {
-        int index = optimizedOrder[idxo] - 1;
-        idxo--;
-        int **resultMatrix = (int **)calloc(inputList[0][0], sizeof(int *));
-        for (int j = 0; j < inputList[i][0]; j++)
+        //resultMatrix init
+        int **resultMatrix = (int **)calloc(inputList[frontIdx][0], sizeof(int *));
+        for (int j = 0; j < inputList[frontIdx][0]; j++)
         {
-            resultMatrix[j] = (int *)calloc(inputList[i + 1][1], sizeof(int));
+            resultMatrix[j] = (int *)calloc(inputList[backIdx][1], sizeof(int));
         }
-        for (int j = 0; j < inputList[0][0]; j++)
-            for (int k = 0; k < inputList[i + 1][1]; k++)
-                for (int t = 0; t < inputList[i + 1][0]; t++)
+        //multiply
+        if (optimizedOrder[idxo] < optimizedOrder[idxo + 1])
+        {
+            for (int j = 0; j < inputList[frontIdx][0]; j++)
+                for (int k = 0; k < inputList[backIdx][1]; k++)
+                    for (int t = 0; t < inputList[midIdx][0]; t++)
+                    {
+                        resultMatrix[j][k] += matrixList[backIdx][j][t] * tempMatrix[t][k];
+                        multipleCounter++;
+                    }
+        }
+        else
+        {
+            for (int j = 0; j < inputList[frontIdx][0]; j++)
+                for (int k = 0; k < inputList[backIdx][1]; k++)
                 {
-                    resultMatrix[j][k] += tempMatrix[j][t] * matrixList[index][t][k];
-                    multipleCounter++;
+                    for (int t = 0; t < inputList[midIdx][1]; t++)
+                    {
+                        resultMatrix[j][k] += tempMatrix[j][t] * matrixList[backIdx][t][k];
+                        multipleCounter++;
+                    }
                 }
-        free(tempMatrix);
-        int **tempMatrix = (int **)calloc(inputList[0][0], sizeof(int *));
-        for (int j = 0; j < inputList[i][0]; j++)
-        {
-            tempMatrix[j] = (int *)calloc(inputList[i + 1][1], sizeof(int));
         }
-        for (int j = 0; j < inputList[0][0]; j++)
-            for (int k = 0; k < inputList[i + 1][1]; k++)
+
+        //tempMatrix copy
+        free(tempMatrix);
+        int **tempMatrix = (int **)calloc(inputList[frontIdx][0], sizeof(int *));
+        for (int j = 0; j < inputList[frontIdx][0]; j++)
+        {
+            tempMatrix[j] = (int *)calloc(inputList[backIdx][1], sizeof(int));
+        }
+        for (int j = 0; j < inputList[frontIdx][0]; j++)
+            for (int k = 0; k < inputList[backIdx][1]; k++)
             {
                 tempMatrix[j][k] = resultMatrix[j][k];
             }
+
         if (i == readLine - 2)
         {
             for (int j = 0; j < inputList[0][0]; j++)
@@ -184,6 +216,19 @@ int main()
                 {
                     result[j][k] = resultMatrix[j][k];
                 }
+            break;
+        }
+
+        idxo--;
+        if (optimizedOrder[idxo] < optimizedOrder[idxo + 1])
+        {
+            midIdx = frontIdx;
+            frontIdx = optimizedOrder[idxo] - 1;
+        }
+        else
+        {
+            midIdx = backIdx;
+            backIdx = optimizedOrder[idxo] - 1;
         }
     }
 
