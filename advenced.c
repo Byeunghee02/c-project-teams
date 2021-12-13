@@ -6,18 +6,6 @@
 #define INPUT_FILE_NAME "input.txt"
 #define OUTPUT_FILE_NAME "input_sol.txt"
 
-int min(int a, int b)
-{
-    if (a < b)
-        return a;
-    return b;
-}
-char minVal(int a, int b)
-{
-    if (a < b)
-        return 'l';
-    return 'r';
-}
 
 int main()
 {
